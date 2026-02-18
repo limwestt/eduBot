@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Résultat Quiz — EduBot{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-10">
+  <div class="animate-slide-up">
+
+    <div class="card text-center mb-8" style="background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(109,40,217,0.02));border-color:rgba(124,58,237,0.18)">
+
+      {% if data.pourcentage >= 80 %}
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto mb-4 shadow-xl animate-float">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+      </div>
+      <h2 class="text-2xl font-extrabold text-gray-900 mb-1">Excellent !</h2>
+      {% elif data.pourcentage >= 50 %}
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-xl animate-float">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/></svg>
+      </div>
+      <h2 class="text-2xl font-extrabold text-gray-900 mb-1">Bien joué !</h2>
+      {% else %}
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center mx-auto mb-4 shadow-xl animate-float">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+      <h2 class="text-2xl font-extrabold text-gray-900 mb-1">Continue !</h2>
+      {% endif %}
+
+      <p class="text-gray-500 text-sm mb-6">{{ data.categorie_nom }} — Niveau {{ data.niveau }}</p>
+
+      <!-- Score cercle -->
+      <div class="flex justify-center items-center gap-8 mb-6">
+        <div class="text-center">
+          <div class="text-5xl font-black {% if data.pourcentage >= 80 %}text-emerald-600{% elif data.pourcentage >= 50 %}text-violet-600{% else %}text-orange-600{% endif %}">
+            {{ data.pourcentage }}%
+          </div>
+          <div class="text-xs text-gray-400 uppercase tracking-wider mt-1">Score</div>
+        </div>
+        <div class="h-12 w-px bg-gray-200"></div>
+        <div class="text-center">
+          <div class="text-5xl font-black text-gray-800">{{ data.bonnes_reponses }}<span class="text-2xl text-gray-400">/{{ data.total_questions }}</span></div>
+          <div class="text-xs text-gray-400 uppercase tracking-wider mt-1">Réponses</div>
+        </div>
+        <div class="h-12 w-px bg-gray-200"></div>
+        <div class="text-center">
+          <div class="text-5xl font-black text-violet-600">+{{ data.score_total }}</div>
+          <div class="text-xs text-gray-400 uppercase tracking-wider mt-1">Points</div>
+        </div>
+      </div>
+
+      <!-- Temps -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-sm text-gray-600 mb-6">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Temps : {{ data.temps }}s
+      </div>
+
+      <!-- Promotion -->
+      {% if data.promotion %}
+      <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 mb-4">
+        <div class="flex items-center gap-3 justify-center">
+          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <p class="text-emerald-800 font-bold text-sm">Niveau supérieur débloqué !</p>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Actions -->
+    <div class="flex gap-3">
+      <a href="{% url 'quiz_niveau' data.niveau %}" class="btn-primary flex-1 justify-center py-3.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Rejouer
+      </a>
+      <a href="{% url 'quiz_historique' %}" class="btn-ghost flex-1 justify-center py-3.5">
+        Historique
+      </a>
+      <a href="{% url 'dashboard' %}" class="btn-ghost py-3.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
