@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Niveau {{ config.label }} — EduBot{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-10">
+  <div class="animate-slide-up">
+
+    <a href="{% url 'quiz_index' %}" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-violet-600 mb-8 transition-colors font-medium">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Retour aux niveaux
+    </a>
+
+    <!-- Header -->
+    <div class="card mb-8" style="background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(109,40,217,0.02));border-color:rgba(124,58,237,0.18)">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+
+          {% if niveau == 'debutant' %}
+          <div class="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center shadow-md animate-float">
+            <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          </div>
+          {% elif niveau == 'intermediaire' %}
+          <div class="w-14 h-14 rounded-2xl bg-violet-100 flex items-center justify-center shadow-md animate-float">
+            <svg class="w-7 h-7 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          {% else %}
+          <div class="w-14 h-14 rounded-2xl bg-orange-100 flex items-center justify-center shadow-md animate-float">
+            <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
+          </div>
+          {% endif %}
+
+          <div>
+            <h1 class="text-2xl font-extrabold text-gray-900">Niveau {{ config.label }}</h1>
+            <p class="text-gray-500 text-sm mt-1">{{ config.nb_questions }} questions générées par Gemini AI — +{{ config.points_par_reponse }} pts / bonne réponse</p>
+          </div>
+        </div>
+
+        <!-- Bouton Lancer -->
+        <a href="{% url 'quiz_commencer' niveau %}" class="btn-primary px-8 py-4
+          {% if niveau == 'debutant' %}" style="background:linear-gradient(135deg,#059669,#0d9488);box-shadow:0 4px 20px rgba(5,150,105,0.3)">
+          {% elif niveau == 'intermediaire' %}">
+          {% else %}" style="background:linear-gradient(135deg,#ea580c,#dc2626);box-shadow:0 4px 20px rgba(234,88,12,0.3)">
+          {% endif %}
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Lancer le quiz
+        </a>
+      </div>
+
+      <!-- Stats rapides -->
+      <div class="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-violet-100">
+        <div class="text-center">
+          <div class="text-2xl font-black text-gray-800">{{ config.nb_questions }}</div>
+          <div class="text-xs text-gray-400 uppercase tracking-wider">Questions</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-black text-violet-600">+{{ config.points_par_reponse }}</div>
+          <div class="text-xs text-gray-400 uppercase tracking-wider">Pts / réponse</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-black text-gray-800">{{ config.seuil_promotion }}%</div>
+          <div class="text-xs text-gray-400 uppercase tracking-wider">Seuil niveau +</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gemini badge -->
+    <div class="card mb-8 flex items-center gap-4" style="padding:16px 24px;background:linear-gradient(135deg,rgba(124,58,237,0.04),rgba(109,40,217,0.02));border-color:rgba(124,58,237,0.12)">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center flex-shrink-0 shadow-md">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/></svg>
+      </div>
+      <div>
+        <p class="font-bold text-gray-800 text-sm">Questions générées par Gemini AI</p>
+        <p class="text-gray-500 text-xs">Chaque quiz est unique — les questions changent à chaque partie. Prépare-toi !</p>
+      </div>
+    </div>
+
+    <!-- Dernières tentatives -->
+    {% if tentatives %}
+    <div>
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Tes dernières tentatives</h2>
+      <div class="space-y-3">
+        {% for t in tentatives %}
+        <div class="card flex items-center gap-4" style="padding:14px 20px">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0
+            {% if t.pourcentage >= 80 %}bg-emerald-100{% elif t.pourcentage >= 50 %}bg-violet-100{% else %}bg-red-100{% endif %}">
+            <span class="font-black text-sm
+              {% if t.pourcentage >= 80 %}text-emerald-600{% elif t.pourcentage >= 50 %}text-violet-600{% else %}text-red-600{% endif %}">
+              {{ t.pourcentage|floatformat:0 }}%
+            </span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold text-gray-800 text-sm">{{ t.bonnes_reponses }}/{{ t.questions_repondus }} bonnes réponses</div>
+            <div class="text-xs text-gray-400">{{ t.date_tentative|date:"d M Y à H:i" }} — {{ t.temps_employe }}s</div>
+          </div>
+          <div class="text-right flex-shrink-0">
+            <div class="font-black text-violet-600 text-sm">+{{ t.score_total }} pts</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="card text-center py-12" style="border-style:dashed">
+      <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <p class="text-gray-500 text-sm font-medium">Aucune tentative pour ce niveau</p>
+      <p class="text-gray-400 text-xs mt-1">Lance ton premier quiz et commence à gagner des points !</p>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

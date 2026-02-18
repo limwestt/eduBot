@@ -1,14 +1,15 @@
-import random
-from django.shortcuts import render, get_object_or_404, redirect
+import json
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Categorie, Question, TentativeQuiz
+from .models import TentativeQuiz
+from .ai_service import generer_questions
 from apps.accounts.models import UserProfile
 
 NIVEAUX_CONFIG = {
-    'debutant': {'label': 'Débutant', 'nb_questions': 10, 'points_par_reponse': 10, 'seuil_promotion': 80},
-    'intermediaire': {'label': 'Intermédiaire', 'nb_questions': 10, 'points_par_reponse': 20, 'seuil_promotion': 80},
-    'avance': {'label': 'Avancé', 'nb_questions': 10, 'points_par_reponse': 30, 'seuil_promotion': 80},
+    'debutant':       {'label': 'Débutant',       'nb_questions': 10, 'points_par_reponse': 10, 'seuil_promotion': 80},
+    'intermediaire':  {'label': 'Intermédiaire',   'nb_questions': 10, 'points_par_reponse': 20, 'seuil_promotion': 80},
+    'avance':         {'label': 'Avancé',           'nb_questions': 10, 'points_par_reponse': 30, 'seuil_promotion': 80},
 }
 
 
@@ -19,7 +20,7 @@ def index(request):
     for niveau_key, config in NIVEAUX_CONFIG.items():
         tentatives = TentativeQuiz.objects.filter(
             user=request.user,
-            categorie__niveau=niveau_key
+            niveau=niveau_key
         )
         meilleur = tentatives.order_by('-pourcentage').first()
         stats_niveaux.append({
@@ -30,51 +31,45 @@ def index(request):
             'points_par_reponse': config['points_par_reponse'],
             'nb_questions': config['nb_questions'],
         })
-    context = {
+    return render(request, 'quiz/index.html', {
         'profile': profile,
         'stats_niveaux': stats_niveaux,
-    }
-    return render(request, 'quiz/index.html', context)
+    })
 
 
 @login_required
 def niveau(request, niveau):
     if niveau not in NIVEAUX_CONFIG:
-        messages.error(request, "Niveau invalide.")
         return redirect('quiz_index')
-    config = NIVEAUX_CONFIG[niveau]
-    categories = Categorie.objects.filter(niveau=niveau)
     tentatives = TentativeQuiz.objects.filter(
         user=request.user,
-        categorie__niveau=niveau
+        niveau=niveau
     ).order_by('-date_tentative')[:5]
-    context = {
+    return render(request, 'quiz/niveau.html', {
         'niveau': niveau,
-        'config': config,
-        'categories': categories,
+        'config': NIVEAUX_CONFIG[niveau],
         'tentatives': tentatives,
-    }
-    return render(request, 'quiz/niveau.html', context)
+    })
 
 
 @login_required
 def commencer_quiz(request, niveau):
     if niveau not in NIVEAUX_CONFIG:
         return redirect('quiz_index')
+
     config = NIVEAUX_CONFIG[niveau]
-    categories = Categorie.objects.filter(niveau=niveau)
-    if not categories.exists():
-        messages.error(request, "Aucune catégorie disponible pour ce niveau.")
-        return redirect('quiz_index')
-    categorie = random.choice(list(categories))
-    questions = list(Question.objects.filter(categorie=categorie))
-    if len(questions) < config['nb_questions']:
-        questions_selectionnees = questions
-    else:
-        questions_selectionnees = random.sample(questions, config['nb_questions'])
+
+    # Génération ai
+    questions = generer_questions(niveau, config['nb_questions'])
+
+    if not questions:
+        messages.error(request, "Impossible de générer les questions. Réessaie dans quelques secondes.")
+        return redirect('quiz_niveau', niveau=niveau)
+
+    # Stocker en session
     request.session['quiz_niveau'] = niveau
-    request.session['quiz_categorie_id'] = categorie.id
-    request.session['quiz_questions_ids'] = [q.id for q in questions_selectionnees]
+    request.session['quiz_questions'] = questions
+
     return redirect('quiz_quiz', niveau=niveau)
 
 
@@ -82,47 +77,54 @@ def commencer_quiz(request, niveau):
 def quiz(request, niveau):
     if niveau not in NIVEAUX_CONFIG:
         return redirect('quiz_index')
-    questions_ids = request.session.get('quiz_questions_ids', [])
-    categorie_id = request.session.get('quiz_categorie_id')
-    if not questions_ids or not categorie_id:
+
+    questions = request.session.get('quiz_questions', [])
+    if not questions:
         messages.error(request, "Session expirée. Recommence le quiz.")
         return redirect('quiz_niveau', niveau=niveau)
-    categorie = get_object_or_404(Categorie, id=categorie_id)
-    questions = list(Question.objects.filter(id__in=questions_ids))
-    questions.sort(key=lambda q: questions_ids.index(q.id))
+
     if request.method == 'POST':
         config = NIVEAUX_CONFIG[niveau]
         bonnes_reponses = 0
         score_total = 0
         resultats = []
-        for question in questions:
-            reponse_user = request.POST.get(f'question_{question.id}', '').upper()
-            correct = reponse_user == question.bonne_reponse.upper()
+
+        for i, question in enumerate(questions):
+            reponse_user = request.POST.get(f'question_{i}', '').upper()
+            correct = reponse_user == question['bonne_reponse'].upper()
             if correct:
                 bonnes_reponses += 1
-                score_total += question.points
+                score_total += config['points_par_reponse']
             resultats.append({
-                'question': question,
+                'texte': question['texte'],
+                'choix_a': question['choix_a'],
+                'choix_b': question['choix_b'],
+                'choix_c': question['choix_c'],
+                'choix_d': question['choix_d'],
+                'bonne_reponse': question['bonne_reponse'],
+                'explication': question.get('explication', ''),
                 'reponse_user': reponse_user,
                 'correct': correct,
             })
+
         total_questions = len(questions)
         pourcentage = round((bonnes_reponses / total_questions) * 100, 1) if total_questions > 0 else 0
         temps = int(request.POST.get('temps_employe', 0))
-        tentative = TentativeQuiz.objects.create(
+
+        TentativeQuiz.objects.create(
             user=request.user,
-            categorie=categorie,
+            niveau=niveau,
             questions_repondus=total_questions,
             bonnes_reponses=bonnes_reponses,
             score_total=score_total,
             pourcentage=pourcentage,
             temps_employe=temps,
         )
+
+        # Mise à jour profil
         profile = UserProfile.objects.get(user=request.user)
         profile.score_total += score_total
         profile.dernier_score = pourcentage
-
-        # Mise à jour automatique du niveau
         if pourcentage >= config['seuil_promotion']:
             if niveau == 'debutant':
                 profile.niveau = 'intermediate'
@@ -130,30 +132,28 @@ def quiz(request, niveau):
                 profile.niveau = 'advanced'
         profile.save()
 
-        request.session.pop('quiz_questions_ids', None)
-        request.session.pop('quiz_categorie_id', None)
+        request.session.pop('quiz_questions', None)
         request.session.pop('quiz_niveau', None)
 
         request.session['quiz_resultats'] = {
-            'categorie_nom': categorie.nom,
             'niveau': niveau,
+            'label': config['label'],
             'bonnes_reponses': bonnes_reponses,
             'total_questions': total_questions,
             'score_total': score_total,
             'pourcentage': pourcentage,
             'temps': temps,
             'promotion': pourcentage >= config['seuil_promotion'],
+            'resultats': resultats,
         }
         return redirect('quiz_resultat')
 
-    context = {
-        'categorie': categorie,
+    return render(request, 'quiz/quiz.html', {
         'questions': questions,
         'niveau': niveau,
         'config': NIVEAUX_CONFIG[niveau],
         'total': len(questions),
-    }
-    return render(request, 'quiz/quiz.html', context)
+    })
 
 
 @login_required
@@ -168,16 +168,11 @@ def resultat(request):
 def historique(request):
     tentatives = TentativeQuiz.objects.filter(
         user=request.user
-    ).select_related('categorie').order_by('-date_tentative')
-    total_tentatives = tentatives.count()
-    moyenne_globale = 0
-    if total_tentatives > 0:
-        moyenne_globale = round(
-            sum(t.pourcentage for t in tentatives) / total_tentatives, 1
-        )
-    context = {
+    ).order_by('-date_tentative')
+    total = tentatives.count()
+    moyenne = round(sum(t.pourcentage for t in tentatives) / total, 1) if total > 0 else 0
+    return render(request, 'quiz/historique.html', {
         'tentatives': tentatives,
-        'total_tentatives': total_tentatives,
-        'moyenne_globale': moyenne_globale,
-    }
-    return render(request, 'quiz/historique.html', context)
+        'total_tentatives': total,
+        'moyenne_globale': moyenne,
+    })
