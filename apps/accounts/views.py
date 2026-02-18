@@ -11,14 +11,14 @@ def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            UserProfile.objects.create(user=user)
+            user = form.save()  # UserProfile déjà créé dans form.save()
             login(request, user)
-            messages.success(request, 'Inscription réussie ! Bienvenue sur EduBot.')
+            messages.success(request, '🎉 Inscription réussie ! Bienvenue sur EduBot.')
             return redirect('dashboard')
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
+
 
 def user_login(request):
     if request.method == 'POST':

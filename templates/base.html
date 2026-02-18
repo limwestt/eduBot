@@ -4,14 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}EduBot — Apprends. Progresse. Réussis.{% endblock %}</title>
-
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <!-- Tailwind Config inline -->
     <script>
       tailwind.config = {
         theme: {
@@ -19,16 +13,9 @@
             fontFamily: { inter: ['Inter', 'sans-serif'] },
             colors: {
               violet: {
-                50:  '#f5f3ff',
-                100: '#ede9fe',
-                200: '#ddd6fe',
-                300: '#c4b5fd',
-                400: '#a78bfa',
-                500: '#8b5cf6',
-                600: '#7c3aed',
-                700: '#6d28d9',
-                800: '#5b21b6',
-                900: '#4c1d95',
+                50:'#f5f3ff', 100:'#ede9fe', 200:'#ddd6fe',
+                300:'#c4b5fd', 400:'#a78bfa', 500:'#8b5cf6',
+                600:'#7c3aed', 700:'#6d28d9', 800:'#5b21b6', 900:'#4c1d95',
               }
             },
             animation: {
@@ -39,39 +26,36 @@
             },
             keyframes: {
               float: {
-                '0%, 100%': { transform: 'translateY(0px)' },
+                '0%,100%': { transform: 'translateY(0px)' },
                 '50%': { transform: 'translateY(-12px)' },
               },
               slideUp: {
-                '0%': { opacity: '0', transform: 'translateY(30px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
+                '0%': { opacity:'0', transform:'translateY(30px)' },
+                '100%': { opacity:'1', transform:'translateY(0)' },
               },
               fadeIn: {
-                '0%': { opacity: '0' },
-                '100%': { opacity: '1' },
+                '0%': { opacity:'0' },
+                '100%': { opacity:'1' },
               }
             }
           }
         }
       }
     </script>
-
     <style>
       * { font-family: 'Inter', sans-serif; }
-      
+
       .glass {
-        background: rgba(255,255,255,0.7);
+        background: rgba(255,255,255,0.75);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(124,58,237,0.15);
+        border: 1px solid rgba(124,58,237,0.12);
       }
-
-      .glass-dark {
-        background: rgba(109,40,217,0.15);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(167,139,250,0.3);
+      .glass-violet {
+        background: rgba(109,40,217,0.1);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(167,139,250,0.25);
       }
-
       .gradient-text {
         background: linear-gradient(135deg, #7c3aed, #a78bfa, #7c3aed);
         background-size: 200% auto;
@@ -79,220 +63,226 @@
         -webkit-text-fill-color: transparent;
         animation: shimmer 3s linear infinite;
       }
-
       @keyframes shimmer {
         0% { background-position: 0% center; }
         100% { background-position: 200% center; }
       }
-
       .btn-primary {
         background: linear-gradient(135deg, #7c3aed, #6d28d9);
         color: white;
-        padding: 12px 28px;
-        border-radius: 14px;
+        padding: 11px 26px;
+        border-radius: 12px;
         font-weight: 600;
-        font-size: 0.9rem;
-        letter-spacing: 0.02em;
+        font-size: 0.875rem;
+        letter-spacing: 0.01em;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+        box-shadow: 0 4px 20px rgba(124,58,237,0.3);
         border: none;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         gap: 8px;
+        text-decoration: none;
       }
       .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 30px rgba(124,58,237,0.5);
+        box-shadow: 0 8px 28px rgba(124,58,237,0.45);
         background: linear-gradient(135deg, #6d28d9, #5b21b6);
       }
-
       .btn-ghost {
         background: transparent;
         color: #7c3aed;
         padding: 10px 22px;
         border-radius: 12px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
         transition: all 0.3s ease;
-        border: 2px solid rgba(124,58,237,0.3);
+        border: 1.5px solid rgba(124,58,237,0.3);
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         gap: 8px;
+        text-decoration: none;
       }
       .btn-ghost:hover {
-        background: rgba(124,58,237,0.08);
+        background: rgba(124,58,237,0.07);
         border-color: #7c3aed;
         transform: translateY(-1px);
       }
-
       .card {
-        background: rgba(255,255,255,0.85);
+        background: rgba(255,255,255,0.88);
         backdrop-filter: blur(16px);
-        border: 1px solid rgba(124,58,237,0.12);
-        border-radius: 24px;
+        border: 1px solid rgba(124,58,237,0.1);
+        border-radius: 22px;
         padding: 32px;
-        box-shadow: 0 8px 40px rgba(124,58,237,0.08), 0 1px 3px rgba(0,0,0,0.05);
+        box-shadow: 0 4px 32px rgba(124,58,237,0.07), 0 1px 3px rgba(0,0,0,0.04);
         transition: all 0.3s ease;
       }
       .card:hover {
-        box-shadow: 0 16px 60px rgba(124,58,237,0.15), 0 4px 12px rgba(0,0,0,0.08);
-        transform: translateY(-3px);
-        border-color: rgba(124,58,237,0.25);
+        box-shadow: 0 12px 48px rgba(124,58,237,0.13);
+        transform: translateY(-2px);
+        border-color: rgba(124,58,237,0.2);
       }
-
       .input-field {
         width: 100%;
-        padding: 14px 18px;
-        border: 2px solid rgba(124,58,237,0.15);
-        border-radius: 14px;
-        font-size: 0.95rem;
+        padding: 13px 16px;
+        border: 1.5px solid rgba(124,58,237,0.18);
+        border-radius: 12px;
+        font-size: 0.925rem;
         color: #1f2937;
         background: rgba(255,255,255,0.9);
-        transition: all 0.3s ease;
+        transition: all 0.25s ease;
         outline: none;
       }
       .input-field:focus {
         border-color: #7c3aed;
-        box-shadow: 0 0 0 4px rgba(124,58,237,0.1);
-        background: white;
+        box-shadow: 0 0 0 4px rgba(124,58,237,0.08);
+        background: #fff;
       }
-      .input-field::placeholder { color: #9ca3af; }
-
+      .input-field::placeholder { color: #b0b7c3; }
       .badge {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
+        gap: 5px;
+        padding: 4px 12px;
         border-radius: 50px;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 600;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.04em;
         text-transform: uppercase;
       }
-      .badge-violet { background: rgba(124,58,237,0.12); color: #7c3aed; }
-      .badge-green  { background: rgba(16,185,129,0.12); color: #059669; }
-      .badge-orange { background: rgba(245,158,11,0.12); color: #d97706; }
-
-      /* Scrollbar custom */
-      ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: #f5f3ff; }
-      ::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 3px; }
-      ::-webkit-scrollbar-thumb:hover { background: #7c3aed; }
-
-      /* Orbs décoratifs */
+      .badge-violet { background: rgba(124,58,237,0.1); color: #7c3aed; }
+      .badge-green  { background: rgba(16,185,129,0.1); color: #059669; }
+      .badge-orange { background: rgba(245,158,11,0.1); color: #d97706; }
       .orb {
         position: fixed;
         border-radius: 50%;
-        filter: blur(80px);
-        opacity: 0.15;
+        filter: blur(90px);
+        opacity: 0.12;
         pointer-events: none;
         z-index: 0;
       }
+      ::-webkit-scrollbar { width: 5px; }
+      ::-webkit-scrollbar-track { background: #f5f3ff; }
+      ::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: #7c3aed; }
     </style>
-
     {% block extra_head %}{% endblock %}
 </head>
 
 <body class="bg-gradient-to-br from-violet-50 via-white to-purple-50 min-h-screen relative overflow-x-hidden">
 
-    <!-- Orbs décoratifs background -->
-    <div class="orb w-96 h-96 bg-violet-500 top-0 -left-32 animate-pulse-slow"></div>
-    <div class="orb w-80 h-80 bg-purple-400 bottom-0 -right-20 animate-pulse-slow" style="animation-delay:2s"></div>
-    <div class="orb w-64 h-64 bg-violet-300 top-1/2 left-1/2 animate-pulse-slow" style="animation-delay:4s"></div>
+  <!-- Orbs -->
+  <div class="orb w-96 h-96 bg-violet-500 -top-20 -left-32 animate-pulse-slow"></div>
+  <div class="orb w-80 h-80 bg-purple-400 bottom-0 -right-20 animate-pulse-slow" style="animation-delay:2s"></div>
 
-    <!-- ===== NAVBAR ===== -->
-    <nav class="glass sticky top-0 z-50 shadow-sm" style="border-bottom:1px solid rgba(124,58,237,0.12)">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+  <!-- NAVBAR -->
+  <nav class="glass sticky top-0 z-50" style="box-shadow:0 1px 20px rgba(124,58,237,0.08)">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
 
-                <!-- Logo -->
-                <a href="/" class="flex items-center gap-3 group">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                        <span class="text-white text-lg">🎓</span>
-                    </div>
-                    <span class="text-xl font-extrabold gradient-text">EduBot</span>
-                    <span class="badge badge-violet text-xs hidden sm:inline-flex">v2</span>
-                </a>
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-3 group">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+            <!-- Graduation cap SVG -->
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+            </svg>
+          </div>
+          <span class="text-lg font-extrabold gradient-text tracking-tight">EduBot</span>
+          <span class="badge badge-violet hidden sm:inline-flex">v2</span>
+        </a>
 
-                <!-- Nav Links (desktop) -->
-                <div class="hidden md:flex items-center gap-1">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'dashboard' %}" class="px-4 py-2 rounded-xl text-gray-600 hover:text-violet-600 hover:bg-violet-50 font-medium text-sm transition-all">
-                            📊 Dashboard
-                        </a>
-                        <a href="#" class="px-4 py-2 rounded-xl text-gray-600 hover:text-violet-600 hover:bg-violet-50 font-medium text-sm transition-all">
-                            🌟 Culture
-                        </a>
-                        <a href="#" class="px-4 py-2 rounded-xl text-gray-600 hover:text-violet-600 hover:bg-violet-50 font-medium text-sm transition-all">
-                            🎯 Quiz
-                        </a>
-                        <a href="#" class="px-4 py-2 rounded-xl text-gray-600 hover:text-violet-600 hover:bg-violet-50 font-medium text-sm transition-all">
-                            💬 Chat IA
-                        </a>
-                    {% endif %}
-                </div>
+        <!-- Nav links -->
+        <div class="hidden md:flex items-center gap-1">
+          {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="flex items-center gap-2 px-4 py-2 rounded-xl text-gray-600 hover:text-violet-600 hover:bg-violet-50 font-medium text-sm transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
+            Dashboard
+          </a>
+          <a href="#" class="flex items-center gap-2 px-4 py-2 rounded-xl text-gray-600 hover:text-violet-600 hover:bg-violet-50 font-medium text-sm transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            Culture
+          </a>
+          <a href="#" class="flex items-center gap-2 px-4 py-2 rounded-xl text-gray-600 hover:text-violet-600 hover:bg-violet-50 font-medium text-sm transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            Quiz
+          </a>
+          <a href="#" class="flex items-center gap-2 px-4 py-2 rounded-xl text-gray-600 hover:text-violet-600 hover:bg-violet-50 font-medium text-sm transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            Chat IA
+          </a>
+          {% endif %}
+        </div>
 
-                <!-- Auth Buttons -->
-                <div class="flex items-center gap-3">
-                    {% if user.is_authenticated %}
-                        <div class="hidden sm:flex items-center gap-2 glass-dark px-4 py-2 rounded-xl">
-                            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                                <span class="text-white text-xs font-bold">{{ user.username|slice:":1"|upper }}</span>
-                            </div>
-                            <span class="text-violet-700 font-semibold text-sm">{{ user.username }}</span>
-                        </div>
-                        <a href="{% url 'logout' %}" class="btn-ghost text-sm px-4 py-2">
-                            Déconnexion
-                        </a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn-ghost text-sm">Connexion</a>
-                        <a href="{% url 'register' %}" class="btn-primary text-sm">
-                            <span>✨</span> S'inscrire
-                        </a>
-                    {% endif %}
-                </div>
+        <!-- Auth -->
+        <div class="flex items-center gap-3">
+          {% if user.is_authenticated %}
+          <div class="hidden sm:flex items-center gap-2 glass-violet px-3 py-2 rounded-xl">
+            <div class="w-6 h-6 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+              <span class="text-white text-xs font-bold">{{ user.username|slice:":1"|upper }}</span>
             </div>
+            <span class="text-violet-700 font-semibold text-sm">{{ user.username }}</span>
+          </div>
+          <a href="{% url 'logout' %}" class="btn-ghost text-sm px-4 py-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Déconnexion
+          </a>
+          {% else %}
+          <a href="{% url 'login' %}" class="btn-ghost text-sm">Connexion</a>
+          <a href="{% url 'register' %}" class="btn-primary text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+            S'inscrire
+          </a>
+          {% endif %}
         </div>
-    </nav>
 
-    <!-- ===== MESSAGES ===== -->
-    {% if messages %}
-    <div class="max-w-7xl mx-auto px-4 pt-4 relative z-10">
-        {% for message in messages %}
-        <div class="animate-slide-up flex items-center gap-3 px-5 py-4 rounded-2xl mb-3 shadow-md
-            {% if message.tags == 'success' %}bg-emerald-50 border border-emerald-200 text-emerald-800
-            {% elif message.tags == 'error' %}bg-red-50 border border-red-200 text-red-800
-            {% else %}bg-violet-50 border border-violet-200 text-violet-800{% endif %}">
-            <span class="text-xl">
-                {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% else %}ℹ️{% endif %}
-            </span>
-            <span class="font-medium text-sm">{{ message }}</span>
-        </div>
-        {% endfor %}
+      </div>
     </div>
-    {% endif %}
+  </nav>
 
-    <!-- ===== CONTENU ===== -->
-    <main class="relative z-10">
-        {% block content %}{% endblock %}
-    </main>
+  <!-- MESSAGES -->
+  {% if messages %}
+  <div class="max-w-7xl mx-auto px-4 pt-4 relative z-10">
+    {% for message in messages %}
+    <div class="animate-slide-up flex items-center gap-3 px-5 py-4 rounded-2xl mb-3 shadow-sm
+        {% if message.tags == 'success' %}bg-emerald-50 border border-emerald-200 text-emerald-800
+        {% elif message.tags == 'error' %}bg-red-50 border border-red-200 text-red-800
+        {% else %}bg-violet-50 border border-violet-200 text-violet-800{% endif %}">
+      {% if message.tags == 'success' %}
+      <svg class="w-5 h-5 flex-shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      {% elif message.tags == 'error' %}
+      <svg class="w-5 h-5 flex-shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      {% else %}
+      <svg class="w-5 h-5 flex-shrink-0 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      {% endif %}
+      <span class="font-medium text-sm">{{ message }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
-    <!-- ===== FOOTER ===== -->
-    <footer class="relative z-10 mt-24 border-t border-violet-100">
-        <div class="max-w-7xl mx-auto px-4 py-10">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl">🎓</span>
-                    <span class="font-bold gradient-text">EduBot v2</span>
-                    <span class="text-gray-400 text-sm">— par Zeus, Lomé 🇹🇬</span>
-                </div>
-                <p class="text-gray-400 text-sm">Apprends. Progresse. Réussis. • Propulsé par Gemini AI</p>
-            </div>
+  <!-- MAIN -->
+  <main class="relative z-10">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="relative z-10 mt-24 border-t border-violet-100">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-purple-700 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+          </div>
+          <span class="font-bold gradient-text">EduBot v2</span>
+          <span class="text-gray-400 text-sm">— par Zeus, Lomé, Togo</span>
         </div>
-    </footer>
+        <p class="text-gray-400 text-sm">Apprends. Progresse. Réussis. — Propulsé par Gemini AI</p>
+      </div>
+    </div>
+  </footer>
 
-    {% block extra_scripts %}{% endblock %}
+  {% block extra_scripts %}{% endblock %}
 </body>
 </html>
