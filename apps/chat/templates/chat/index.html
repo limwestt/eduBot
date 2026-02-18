@@ -2,23 +2,329 @@
 {% block title %}Chat IA — EduBot{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto px-4 py-10">
-  <div class="animate-slide-up">
+<div class="max-w-4xl mx-auto px-4 py-6">
+  <div class="animate-slide-up flex flex-col" style="height:calc(100vh - 160px)">
 
-    <div class="card text-center py-20" style="background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(109,40,217,0.02));border-color:rgba(124,58,237,0.18)">
-      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center mx-auto mb-5 shadow-xl animate-float">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-        </svg>
+    <!-- Header -->
+    <div class="card mb-4 flex-shrink-0" style="padding:16px 24px;background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(109,40,217,0.02));border-color:rgba(124,58,237,0.18)">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-md">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          </div>
+          <div>
+            <h1 class="text-lg font-extrabold text-gray-900">EduBot Chat</h1>
+            <div class="flex items-center gap-1.5">
+              <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span class="text-xs text-gray-500">Propulsé par Groq AI — Llama 3.3</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="effacerHistorique()" class="btn-ghost text-xs text-red-500 hover:text-red-600 hover:bg-red-50 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          Effacer
+        </button>
       </div>
-      <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Chat IA</h2>
-      <p class="text-gray-500 text-sm mb-6">Module 4 — en cours de développement</p>
-      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-100 text-violet-700 text-sm font-semibold">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        Disponible bientôt
+    </div>
+
+    <!-- Zone messages -->
+    <div id="chatBox" class="flex-1 overflow-y-auto space-y-4 px-1 mb-4" style="scroll-behavior:smooth">
+
+      {% if not messages %}
+      <div class="flex justify-start">
+        <div class="flex items-start gap-3 max-w-lg">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center flex-shrink-0 shadow-md mt-1">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/></svg>
+          </div>
+          <div class="card" style="padding:14px 18px;border-color:rgba(124,58,237,0.2);background:rgba(124,58,237,0.03)">
+            <p class="text-sm text-gray-800 font-semibold mb-2">Bonjour {{ request.user.username }} !</p>
+            <p class="text-sm text-gray-600">Je suis <strong>EduBot</strong>, ton assistant IA capable de répondre à <strong>toutes tes questions</strong> — sciences, tech, histoire, maths, culture et bien plus.</p>
+            <p class="text-sm text-gray-600 mt-1">Pose-moi n'importe quelle question, je suis là pour t'aider !</p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% for msg in messages %}
+      {% if msg.role == 'user' %}
+      <div class="flex justify-end">
+        <div class="max-w-lg">
+          <div class="px-4 py-3 rounded-2xl rounded-tr-sm text-sm text-white font-medium" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">
+            {{ msg.content }}
+          </div>
+          <div class="text-xs text-gray-400 text-right mt-1">{{ msg.created_at|date:"H:i" }}</div>
+        </div>
+      </div>
+      {% else %}
+      <div class="flex justify-start">
+        <div class="flex items-start gap-3 max-w-2xl">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center flex-shrink-0 shadow-md mt-1">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/></svg>
+          </div>
+          <div>
+            <div class="card text-sm text-gray-800 leading-relaxed" style="padding:14px 18px;border-color:rgba(124,58,237,0.15);white-space:pre-wrap">{{ msg.content }}</div>
+            <div class="text-xs text-gray-400 mt-1">{{ msg.created_at|date:"H:i" }}</div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+
+      <!-- Typing indicator -->
+      <div id="typingIndicator" class="flex justify-start hidden">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center flex-shrink-0 shadow-md">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/></svg>
+          </div>
+          <div class="card flex items-center gap-1 px-4 py-3">
+            <div class="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style="animation-delay:0ms"></div>
+            <div class="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style="animation-delay:150ms"></div>
+            <div class="w-2 h-2 rounded-full bg-violet-400 animate-bounce" style="animation-delay:300ms"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Suggestions rapides -->
+    <div id="suggestions" class="flex gap-2 flex-wrap mb-4 flex-shrink-0 {% if messages %}hidden{% endif %}">
+
+      <button onclick="envoyerSuggestion(this)" class="text-xs px-3 py-2 rounded-xl border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors font-medium flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/></svg>
+        Comment fonctionne l'IA ?
+      </button>
+
+      <button onclick="envoyerSuggestion(this)" class="text-xs px-3 py-2 rounded-xl border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors font-medium flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+        Apprends-moi Python
+      </button>
+
+      <button onclick="envoyerSuggestion(this)" class="text-xs px-3 py-2 rounded-xl border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors font-medium flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        C'est quoi le trading ?
+      </button>
+
+      <button onclick="envoyerSuggestion(this)" class="text-xs px-3 py-2 rounded-xl border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors font-medium flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/></svg>
+        Explique la mondialisation
+      </button>
+
+      <button onclick="envoyerSuggestion(this)" class="text-xs px-3 py-2 rounded-xl border border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors font-medium flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+        C'est quoi un algorithme ?
+      </button>
+
+    </div>
+
+    <!-- Zone de saisie -->
+    <div class="card flex-shrink-0" style="padding:12px 16px">
+      <div class="flex items-end gap-3">
+        <textarea
+          id="messageInput"
+          placeholder="Pose-moi n'importe quelle question..."
+          class="flex-1 resize-none text-sm text-gray-800 bg-transparent outline-none placeholder-gray-400 leading-relaxed"
+          rows="1"
+          style="max-height:120px;overflow-y:auto"
+          onkeydown="handleKeyDown(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button
+          id="sendBtn"
+          onclick="envoyerMessage()"
+          class="btn-primary px-4 py-2.5 flex-shrink-0"
+          style="border-radius:12px">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+        </button>
       </div>
     </div>
 
   </div>
 </div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+.bot-content h1, .bot-content h2, .bot-content h3 {
+  font-weight: 700;
+  margin: 12px 0 6px;
+  color: #1f2937;
+}
+.bot-content h1 { font-size: 1.1rem; }
+.bot-content h2 { font-size: 1rem; }
+.bot-content h3 { font-size: 0.9rem; }
+.bot-content ul, .bot-content ol {
+  padding-left: 20px;
+  margin: 6px 0;
+}
+.bot-content li { margin: 3px 0; }
+.bot-content strong { font-weight: 700; color: #4c1d95; }
+.bot-content p { margin: 6px 0; }
+.bot-content code {
+  background: #f3f4f6;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #6d28d9;
+}
+.bot-content pre {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: 12px;
+  border-radius: 10px;
+  overflow-x: auto;
+  font-size: 0.8rem;
+  margin: 8px 0;
+}
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+const chatBox = document.getElementById('chatBox');
+const messageInput = document.getElementById('messageInput');
+const sendBtn = document.getElementById('sendBtn');
+const typingIndicator = document.getElementById('typingIndicator');
+
+chatBox.scrollTop = chatBox.scrollHeight;
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    envoyerMessage();
+  }
+}
+
+function envoyerSuggestion(btn) {
+  messageInput.value = btn.textContent.trim();
+  document.getElementById('suggestions').classList.add('hidden');
+  envoyerMessage();
+}
+
+function ajouterMessageUser(texte) {
+  const now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  const div = document.createElement('div');
+  div.className = 'flex justify-end';
+  div.innerHTML = `
+    <div class="max-w-lg">
+      <div class="px-4 py-3 rounded-2xl rounded-tr-sm text-sm text-white font-medium" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">
+        ${escapeHtml(texte)}
+      </div>
+      <div class="text-xs text-gray-400 text-right mt-1">${now}</div>
+    </div>`;
+  chatBox.appendChild(div);
+  scrollToBottom();
+}
+
+// Nouvelle fonction pour bulle bot avec Markdown
+function creerBulleBot() {
+  const now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+  const div = document.createElement('div');
+  div.className = 'flex justify-start';
+  div.innerHTML = `
+    <div class="flex items-start gap-3 max-w-2xl">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center flex-shrink-0 shadow-md mt-1">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/></svg>
+      </div>
+      <div>
+        <div class="card text-sm text-gray-800 leading-relaxed bot-content prose prose-sm max-w-none" style="padding:14px 18px;border-color:rgba(124,58,237,0.15);min-width:40px;min-height:20px"></div>
+        <div class="text-xs text-gray-400 mt-1">${now}</div>
+      </div>
+    </div>`;
+  chatBox.appendChild(div);
+  return div.querySelector('.bot-content');
+}
+
+function scrollToBottom() {
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+async function envoyerMessage() {
+  const texte = messageInput.value.trim();
+  if (!texte || sendBtn.disabled) return;
+
+  messageInput.value = '';
+  messageInput.style.height = 'auto';
+  sendBtn.disabled = true;
+
+  ajouterMessageUser(texte);
+  typingIndicator.classList.remove('hidden');
+  scrollToBottom();
+
+  try {
+    const response = await fetch("{% url 'chat_envoyer' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}',
+      },
+      body: JSON.stringify({message: texte}),
+    });
+
+    typingIndicator.classList.add('hidden');
+
+    // Crée la bulle bot vide
+    const botBulle = creerBulleBot();
+    let fullText = '';
+
+    // Lit le stream SSE
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const text = decoder.decode(value);
+      const lines = text.split('\n');
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.slice(6));
+            if (data.chunk) {
+              fullText += data.chunk;
+              // Rendu Markdown
+              botBulle.innerHTML = marked.parse(fullText);
+              scrollToBottom();
+            }
+            if (data.done || data.error) break;
+          } catch (e) {}
+        }
+      }
+    }
+
+  } catch (e) {
+    typingIndicator.classList.add('hidden');
+    const botBulle = creerBulleBot();
+    botBulle.textContent = "Impossible de contacter le serveur. Vérifie ta connexion.";
+  }
+
+  sendBtn.disabled = false;
+  messageInput.focus();
+}
+
+async function effacerHistorique() {
+  if (!confirm("Effacer tout l'historique du chat ?")) return;
+  await fetch("{% url 'chat_effacer' %}", {
+    method: 'POST',
+    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+  });
+  chatBox.innerHTML = '';
+  document.getElementById('suggestions').classList.remove('hidden');
+}
+</script>
 {% endblock %}
