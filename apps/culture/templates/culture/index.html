@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Culture Générale — EduBot{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+
+  <!-- Header -->
+  <div class="animate-slide-up mb-10">
+    <div class="card" style="background:linear-gradient(135deg,rgba(124,58,237,0.06),rgba(109,40,217,0.02));border-color:rgba(124,58,237,0.18)">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-md">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <h1 class="text-2xl font-extrabold text-gray-900">Culture Générale</h1>
+          </div>
+          <p class="text-gray-500 text-sm">Découvre des faits incroyables et gagne des points en répondant aux quiz.</p>
+        </div>
+        <div class="flex gap-4">
+          <div class="text-center px-6 py-3 bg-white rounded-2xl border border-violet-100 shadow-sm">
+            <div class="text-2xl font-black text-violet-600">{{ total_faits }}</div>
+            <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Faits</div>
+          </div>
+          <div class="text-center px-6 py-3 bg-white rounded-2xl border border-violet-100 shadow-sm">
+            <div class="text-2xl font-black text-emerald-600">{{ total_points }}</div>
+            <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Points</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grille des faits -->
+  {% if faits_avec_score %}
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+    {% for item in faits_avec_score %}
+    <div class="card group" style="padding:0;overflow:hidden">
+
+      <!-- Couleur top bar -->
+      <div class="h-1.5 w-full {% if item.deja_fait %}bg-gradient-to-r from-emerald-400 to-teal-500{% else %}bg-gradient-to-r from-violet-500 to-purple-600{% endif %}"></div>
+
+      <div style="padding:24px">
+        <!-- Badge statut -->
+        <div class="flex items-center justify-between mb-4">
+          {% if item.deja_fait %}
+          <span class="badge badge-green flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            Terminé
+          </span>
+          <span class="text-sm font-bold text-emerald-600">{{ item.dernier_score.score }}/3</span>
+          {% else %}
+          <span class="badge badge-violet flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Nouveau
+          </span>
+          <span class="text-xs text-gray-400">3 questions</span>
+          {% endif %}
+        </div>
+
+        <h3 class="text-base font-bold text-gray-900 mb-2 leading-snug">{{ item.fait.titre }}</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5 line-clamp-3">{{ item.fait.contenu|truncatewords:25 }}</p>
+
+        <!-- Actions -->
+        <div class="flex gap-2">
+          <a href="{% url 'culture_fait' item.fait.id %}"
+            class="flex-1 text-center py-2.5 rounded-xl text-sm font-semibold border border-violet-200 text-violet-600 hover:bg-violet-50 transition-all">
+            Lire
+          </a>
+          <a href="{% url 'culture_quiz' item.fait.id %}"
+            class="flex-1 text-center py-2.5 rounded-xl text-sm font-semibold btn-primary justify-center"
+            style="padding-top:10px;padding-bottom:10px">
+            {% if item.deja_fait %}Rejouer{% else %}Quiz{% endif %}
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <!-- État vide -->
+  <div class="card text-center py-20">
+    <div class="w-16 h-16 rounded-2xl bg-violet-100 flex items-center justify-center mx-auto mb-5">
+      <svg class="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+      </svg>
+    </div>
+    <h3 class="text-xl font-bold text-gray-900 mb-2">Aucun fait disponible</h3>
+    <p class="text-gray-500 text-sm mb-6">Ajoute des faits culturels depuis le panneau admin.</p>
+    <a href="/admin/culture/faitculturel/add/" class="btn-primary inline-flex">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Ajouter via Admin
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
