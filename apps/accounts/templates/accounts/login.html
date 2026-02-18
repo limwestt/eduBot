@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Connexion — EduBot{% endblock %}
+
+{% block content %}
+<div class="min-h-[85vh] flex items-center justify-center px-4 py-16">
+    <div class="w-full max-w-md animate-slide-up">
+
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <div class="w-20 h-20 bg-gradient-to-br from-violet-500 to-purple-700 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-2xl animate-float">
+                <span class="text-4xl">🔐</span>
+            </div>
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">
+                Bon retour <span class="gradient-text">Zeus</span> 👋
+            </h1>
+            <p class="text-gray-500 text-base">Connecte-toi pour continuer ton apprentissage</p>
+        </div>
+
+        <!-- Card -->
+        <div class="card">
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+
+                <!-- Username -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        👤 Nom d'utilisateur
+                    </label>
+                    <input type="text" name="username" required
+                        class="input-field"
+                        placeholder="ex: zeus_togo">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        🔑 Mot de passe
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password" id="pwdLogin" required
+                            class="input-field pr-12"
+                            placeholder="••••••••">
+                        <button type="button" onclick="togglePwd('pwdLogin', this)"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-violet-600 transition-colors">
+                            👁
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn-primary w-full justify-center py-4 text-base mt-2">
+                    <span>🚀</span> Se connecter
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-4 my-6">
+                <div class="flex-1 h-px bg-violet-100"></div>
+                <span class="text-gray-400 text-sm">ou</span>
+                <div class="flex-1 h-px bg-violet-100"></div>
+            </div>
+
+            <div class="text-center">
+                <p class="text-gray-500 text-sm">
+                    Pas encore de compte ?
+                    <a href="{% url 'register' %}" class="text-violet-600 font-bold hover:text-violet-700 transition-colors ml-1">
+                        S'inscrire gratuitement →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Features pills -->
+        <div class="flex flex-wrap justify-center gap-2 mt-8">
+            <span class="badge badge-violet">🌟 Culture Générale</span>
+            <span class="badge badge-green">🎯 Quiz IA</span>
+            <span class="badge badge-orange">💬 Chat Gemini</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function togglePwd(id, btn) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁' : '🙈';
+}
+</script>
+{% endblock %}

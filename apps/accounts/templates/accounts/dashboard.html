@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — {{ user.username }} — EduBot{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-12">
+
+    <!-- Hero salutation -->
+    <div class="animate-slide-up mb-12">
+        <div class="card" style="background:linear-gradient(135deg, rgba(124,58,237,0.08), rgba(109,40,217,0.04)); border-color:rgba(124,58,237,0.2)">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex items-center gap-5">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shadow-xl animate-float">
+                        <span class="text-white text-3xl font-black">{{ user.username|slice:":1"|upper }}</span>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-gray-900">
+                            Salut, <span class="gradient-text">{{ user.username }}</span> 👋
+                        </h1>
+                        <p class="text-gray-500 mt-1">Inscrit depuis le {{ profile.date_inscription|date:"d F Y" }}</p>
+                        <span class="badge badge-violet mt-2">
+                            {% if profile.niveau == 'beginner' %}🌱 Débutant
+                            {% elif profile.niveau == 'intermediate' %}⚡ Intermédiaire
+                            {% else %}🔥 Avancé{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <a href="#" class="btn-primary">🎯 Nouveau Quiz</a>
+                    <a href="#" class="btn-ghost">💬 Chat IA</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-10 animate-fade-in">
+
+        <!-- Score -->
+        <div class="card text-center group" style="padding:24px">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                <span class="text-xl">⭐</span>
+            </div>
+            <div class="text-3xl font-black text-gray-900 mb-1">{{ profile.score_total }}</div>
+            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Points totaux</div>
+            <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-violet-400 to-purple-500"></div>
+        </div>
+
+        <!-- Streak -->
+        <div class="card text-center group" style="padding:24px">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                <span class="text-xl">🔥</span>
+            </div>
+            <div class="text-3xl font-black text-gray-900 mb-1">{{ profile.streak }}</div>
+            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Jours de suite</div>
+            <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-orange-400 to-red-500"></div>
+        </div>
+
+        <!-- Quiz joués -->
+        <div class="card text-center group" style="padding:24px">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                <span class="text-xl">🎯</span>
+            </div>
+            <div class="text-3xl font-black text-gray-900 mb-1">{{ total_quiz }}</div>
+            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Quiz joués</div>
+            <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500"></div>
+        </div>
+
+        <!-- Moyenne -->
+        <div class="card text-center group" style="padding:24px">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                <span class="text-xl">📈</span>
+            </div>
+            <div class="text-3xl font-black text-gray-900 mb-1">{{ moyenne }}%</div>
+            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Moyenne</div>
+            <div class="mt-2 h-1 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+        </div>
+    </div>
+
+    <!-- Progression bar + Modules -->
+    <div class="grid lg:grid-cols-3 gap-8">
+
+        <!-- Progression -->
+        <div class="lg:col-span-2 card">
+            <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                📊 Ma Progression Globale
+            </h3>
+
+            <div class="space-y-5">
+                <!-- Culture -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm font-semibold text-gray-700">🌟 Culture Générale</span>
+                        <span class="text-sm font-bold text-violet-600">0%</span>
+                    </div>
+                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-violet-500 to-purple-600 transition-all duration-1000" style="width:0%"></div>
+                    </div>
+                </div>
+                <!-- Quiz -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm font-semibold text-gray-700">🎯 Quiz</span>
+                        <span class="text-sm font-bold text-emerald-600">{{ moyenne }}%</span>
+                    </div>
+                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-1000" style="width:{{ moyenne }}%"></div>
+                    </div>
+                </div>
+                <!-- Chat -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm font-semibold text-gray-700">💬 Chat IA</span>
+                        <span class="text-sm font-bold text-blue-600">0%</span>
+                    </div>
+                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 transition-all duration-1000" style="width:0%"></div>
+                    </div>
+                </div>
+                <!-- Documents -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span class="text-sm font-semibold text-gray-700">📄 Documents IA</span>
+                        <span class="text-sm font-bold text-orange-600">0%</span>
+                    </div>
+                    <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-orange-400 to-red-400 transition-all duration-1000" style="width:0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modules disponibles -->
+        <div class="card">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">🚀 Modules</h3>
+            <div class="space-y-3">
+                {% for module in modules_list %}
+                <a href="{{ module.url }}" class="flex items-center gap-4 p-4 rounded-2xl border-2 border-transparent hover:border-violet-200 hover:bg-violet-50 transition-all group">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl {{ module.bg }} shadow-md group-hover:scale-110 transition-transform">
+                        {{ module.icon }}
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-gray-800 text-sm">{{ module.name }}</div>
+                        <div class="text-xs text-gray-400">{{ module.desc }}</div>
+                    </div>
+                    <span class="text-violet-400 group-hover:text-violet-600 transition-colors">→</span>
+                </a>
+                {% empty %}
+                <a href="#" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-violet-50 transition-all group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">🌟</div>
+                    <div class="flex-1"><div class="font-semibold text-gray-800 text-sm">Culture Générale</div><div class="text-xs text-gray-400">20+ faits incroyables</div></div>
+                    <span class="text-violet-400">→</span>
+                </a>
+                <a href="#" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-violet-50 transition-all group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">🎯</div>
+                    <div class="flex-1"><div class="font-semibold text-gray-800 text-sm">Quiz par niveau</div><div class="text-xs text-gray-400">Teste tes connaissances</div></div>
+                    <span class="text-violet-400">→</span>
+                </a>
+                <a href="#" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-violet-50 transition-all group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">💬</div>
+                    <div class="flex-1"><div class="font-semibold text-gray-800 text-sm">Chat avec Gemini</div><div class="text-xs text-gray-400">Prof IA disponible 24/7</div></div>
+                    <span class="text-violet-400">→</span>
+                </a>
+                <a href="#" class="flex items-center gap-4 p-4 rounded-2xl hover:bg-violet-50 transition-all group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">📄</div>
+                    <div class="flex-1"><div class="font-semibold text-gray-800 text-sm">Quiz depuis PDF</div><div class="text-xs text-gray-400">Upload → 30 questions IA</div></div>
+                    <span class="text-violet-400">→</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
